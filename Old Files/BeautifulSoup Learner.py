@@ -18,3 +18,4 @@ for job_element in job_elements:
     print(company_element.text.strip())
     print(location_element.text.strip())
     print()
+
