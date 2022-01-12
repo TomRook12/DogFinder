@@ -15,7 +15,7 @@ def tableprocessor(table_url):
 
     for row in table_headings.find_all("tr"):
         cols = row.find_all("th")
-        cols = [ele.text.strip() for ele in cols]
+        cols = [cake.text.strip() for cake in cols]
         clean_table.append(cols)
 
     for row in table_body.find_all("tr"):
