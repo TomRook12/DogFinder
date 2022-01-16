@@ -21,7 +21,7 @@ def tableprocessor(table_url):
     for row in table_body.find_all("tr"):
         cols = row.find_all("td")
         cols = [cake.text.strip() for cake in cols]
-        clean_table.append(cols)
+        clean_table.append(cols) #turn this into functions
 
     return clean_table
 
@@ -30,5 +30,7 @@ url="https://www.doglost.co.uk/dog-search.php?status=Lost"
 dog_html = webscraper(url)
 
 dog_table = tableprocessor(dog_html)
+
+pandas.set_option('display.max_columns', None)
 
 print(pandas.DataFrame(dog_table))
