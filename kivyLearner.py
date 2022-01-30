@@ -1,56 +1,76 @@
-import kivy
 from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
+from kivy.uix.widget import Widget
+from kivy.lang import Builder
+from kivy.core.window import Window
 
-class MyGridLayout(GridLayout):
-    # Initialise infinite keywords
-    def __init__(self, **kwargs):
-        # Call grid layout constructor
-        super(MyGridLayout, self).__init__(**kwargs)
+Window.size = (500, 700)
 
-        # set columns
-        self.cols = 2
+Builder.load_file("calc.kv")
 
-        # Add widgets
-        self.add_widget(Label(text="Name: "))
-        # Add Input Box
-        self.name = TextInput(multiline=False)
-        self.add_widget(self.name)
+class MyLayout(Widget):
+    def clear(self):
+        self.ids.calc_input.text = ""
+    #Button pressing function
+    def button_press(self, button):
+        #create variable contains whatever is in the text box already
+        prior = self.ids.calc_input.text
 
-        self.add_widget(Label(text="Favourite Pizza: "))
-        # Add Input Box
-        self.pizza = TextInput(multiline=False)
-        self.add_widget(self.pizza)
+        if "Error" in prior:
+            prior = ""
 
-        self.add_widget(Label(text="Favourite Colour: "))
-        # Add Input Box
-        self.colour = TextInput(multiline=False)
-        self.add_widget(self.colour)
+        if prior == "0":
+            self.ids.calc_input.text = ""
+            self.ids.calc_input.text = f"{button}"
+        else:
+            self.ids.calc_input.text = f"{prior}{button}"
 
-        # Create a submit button
-        self.submit = Button(text="Submit", font_size=32)
-        #Bind the button
-        self.submit.bind(on_press=self.press)
-        self.add_widget(self.submit)
+    #Decimal
+    def dot(self):
+        prior = self.ids.calc_input.text
+        num_list = prior.split("+")
+        if "+" in prior and "." not in num_list[-1]:
+            prior = f"{prior}."
+            self.ids.calc_input.text = prior
+        elif "." in prior:
+            pass
+        else:
+            prior = f"{prior}."
+            self.ids.calc_input.text = prior
 
-    def press(self,instance):
-        name = self.name.text
-        pizza = self.pizza.text
-        colour = self.colour.text
+    def remove(self):
+        prior = self.ids.calc_input.text
+        # Remove the last item in the textbox
+        prior = prior[:-1]
+        # Output back to the textbox
+        self.ids.calc_input.text = prior
 
-        self.add_widget(Label(text=f"Hello {name}, you like {pizza} pizza, and your favourite colour is {colour}"))
+    def pos_neg(self):
+        prior = self.ids.calc_input.text
+        if "-" in prior:
+            self.ids.calc_input.text = f"{prior.replace('-', '')}"
+        else:
+            self.ids.calc_input.text = f"-{prior}"
 
-        #Clear the input boxes
-        self.name.text = ""
-        self.pizza.text = ""
-        self.colour.text = ""
+    #Add, subtract, divide and multiply
+    def math_sign(self, sign):
+        prior = self.ids.calc_input.text
+        self.ids.calc_input.text =f"{prior}{sign}"
 
-class MyApp(App):
+    def equals(self):
+        prior = self.ids.calc_input.text
+        #Error handling
+        try:
+            answer = eval(prior)
+            self.ids.calc_input.text = str(answer)
+        except:
+            self.ids.calc_input.text = "Error"
+
+
+
+class CalculatorApp(App):
     def build(self):
-        return MyGridLayout()
+        return MyLayout()
+
 
 if __name__ == "__main__":
-    MyApp().run()
+    CalculatorApp().run()
